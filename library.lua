@@ -1,12 +1,11 @@
 return function(Modules)
+    local Category = Modules.Category
+
     local Library = {}
     Library.__index = Library
 
-    local Category = Modules.Category
-
     function Library.new()
         local self = setmetatable({}, Library)
-
         self.Categories = {}
 
         function self:AddCategory(name)
@@ -18,6 +17,7 @@ return function(Modules)
 
             local category = Category.new(name)
             self.Categories[name] = category
+            print("Created category:", name)
 
             return category
         end
