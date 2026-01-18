@@ -1,28 +1,106 @@
 return function(Modules)
-    local Category = Modules.Category
+    local Services = {
+        Players = game:GetService("Players")
+    }
+
+    local Environments = {
+        Category = Modules.Category
+    }
+
+    local Players = {
+        Local = Services.Players.LocalPlayer,
+        Gui = Services.Players.LocalPlayer:WaitForChild("PlayerGui")
+    }
 
     local Library = {}
     Library.__index = Library
 
-    function Library.new()
-        local self = setmetatable({}, Library)
-        self.Categories = {}
+    local UiState = {
+        ScreenGui = nil,
+        Container = nil
+    }
 
-        function self:AddCategory(name)
-            assert(type(name) == "string", "Category name must be a string")
+    local Functions = {}
 
-            if self.Categories[name] then
-                error("Category already exists: " .. name)
-            end
-
-            local category = Category.new(name)
-            self.Categories[name] = category
-            print("Created category:", name)
-
-            return category
+    function Functions.CreateUi()
+        local Existing = Players.Gui:FindFirstChild("DynamicUI")
+        if Existing then
+            return Existing, Existing:FindFirstChild("Main")
         end
 
-        return self
+        local Instances = {
+            ScreenGui = Instance.new("ScreenGui"),
+            Main = Instance.new("Frame"),
+            Corner = Instance.new("UICorner"),
+            Layout = Instance.new("UIListLayout"),
+            Padding = Instance.new("UIPadding")
+        }
+
+        Instances.ScreenGui.Name = "DynamicUI"
+        Instances.ScreenGui.IgnoreGuiInset = true
+        Instances.ScreenGui.ResetOnSpawn = false
+        Instances.ScreenGui.Parent = Players.Gui
+
+        Instances.Main.Name = "Main"
+        Instances.Main.Size = UDim2.fromScale(0.35, 0.5)
+        Instances.Main.Position = UDim2.fromScale(0.5, 0.5)
+        Instances.Main.AnchorPoint = Vector2.new(0.5, 0.5)
+        Instances.Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Instances.Main.BorderSizePixel = 0
+        Instances.Main.Parent = Instances.ScreenGui
+
+        Instances.Corner.CornerRadius = UDim.new(0, 12)
+        Instances.Corner.Parent = Instances.Main
+
+        Instances.Layout.Padding = UDim.new(0, 8)
+        Instances.Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+        Instances.Layout.SortOrder = Enum.SortOrder.LayoutOrder
+        Instances.Layout.Parent = Instances.Main
+
+        Instances.Padding.PaddingTop = UDim.new(0, 10)
+        Instances.Padding.PaddingBottom = UDim.new(0, 10)
+        Instances.Padding.PaddingLeft = UDim.new(0, 10)
+        Instances.Padding.PaddingRight = UDim.new(0, 10)
+        Instances.Padding.Parent = Instances.Main
+
+        return Instances.ScreenGui, Instances.Main
+    end
+
+    function Library.new()
+        local Self = setmetatable({}, Library)
+        Self.Categories = {}
+
+        if not UiState.ScreenGui or not UiState.ScreenGui.Parent then
+            UiState.ScreenGui, UiState.Container = Functions.CreateUi()
+        end
+
+        Self.ScreenGui = UiState.ScreenGui
+        Self.Container = UiState.Container
+
+        return Self
+    end
+
+    function Library:AddCategory(Name)
+        assert(type(Name) == "string", "Category name must be a string")
+
+        if Self and Self.Categories and Self.Categories[Name] then
+            error("Category already exists: " .. Name)
+        end
+
+        local Instances = {
+            Canvas = Instance.new("CanvasGroup")
+        }
+
+        Instances.Canvas.Name = Name
+        Instances.Canvas.Size = UDim2.new(1, 0, 0, 60)
+        Instances.Canvas.BackgroundTransparency = 1
+        Instances.Canvas.Parent = Self.Container
+
+        local Category = Environments.Category.new(Name, Instances.Canvas)
+
+        Self.Categories[Name] = Category
+
+        return Category
     end
 
     Modules.Library = Library
