@@ -1,15 +1,10 @@
 return function(Modules)
     local Services = {
-        Players = game:GetService("Players")
+        CoreGui = game:GetService("CoreGui")
     }
 
     local Environments = {
         Category = Modules.Category
-    }
-
-    local Players = {
-        Local = Services.Players.LocalPlayer,
-        Gui = Services.Players.LocalPlayer:WaitForChild("PlayerGui")
     }
 
     local Library = {}
@@ -23,14 +18,14 @@ return function(Modules)
     local Functions = {}
 
     function Functions.CreateUi()
-        local Existing = Players.Gui:FindFirstChild("DynamicUI")
+        local Existing = CoreGui:FindFirstChild("DynamicUI")
         if Existing then
-            return Existing, Existing:FindFirstChild("Main")
+            return Existing, Existing:FindFirstChild("ClickGui")
         end
 
         local Instances = {
             ScreenGui = Instance.new("ScreenGui"),
-            Main = Instance.new("Frame"),
+            ClickGui = Instance.new("Frame"),
             Corner = Instance.new("UICorner"),
             Layout = Instance.new("UIListLayout"),
             Padding = Instance.new("UIPadding")
@@ -41,29 +36,29 @@ return function(Modules)
         Instances.ScreenGui.ResetOnSpawn = false
         Instances.ScreenGui.Parent = Players.Gui
 
-        Instances.Main.Name = "Main"
-        Instances.Main.Size = UDim2.fromScale(0.35, 0.5)
-        Instances.Main.Position = UDim2.fromScale(0.5, 0.5)
-        Instances.Main.AnchorPoint = Vector2.new(0.5, 0.5)
-        Instances.Main.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-        Instances.Main.BorderSizePixel = 0
-        Instances.Main.Parent = Instances.ScreenGui
+        Instance.ClickGui.Name = "Main"
+        Instance.ClickGui.Size = UDim2.fromScale(0.35, 0.5)
+        Instance.ClickGui.Position = UDim2.fromScale(0.5, 0.5)
+        Instance.ClickGui.AnchorPoint = Vector2.new(0.5, 0.5)
+        Instance.ClickGui.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        Instance.ClickGui.BorderSizePixel = 0
+        Instance.ClickGui.Parent = Instances.ScreenGui
 
         Instances.Corner.CornerRadius = UDim.new(0, 12)
-        Instances.Corner.Parent = Instances.Main
+        Instances.Corner.Parent = Instance.ClickGui
 
         Instances.Layout.Padding = UDim.new(0, 8)
         Instances.Layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
         Instances.Layout.SortOrder = Enum.SortOrder.LayoutOrder
-        Instances.Layout.Parent = Instances.Main
+        Instances.Layout.Parent = Instance.ClickGui
 
         Instances.Padding.PaddingTop = UDim.new(0, 10)
         Instances.Padding.PaddingBottom = UDim.new(0, 10)
         Instances.Padding.PaddingLeft = UDim.new(0, 10)
         Instances.Padding.PaddingRight = UDim.new(0, 10)
-        Instances.Padding.Parent = Instances.Main
+        Instances.Padding.Parent = Instance.ClickGui
 
-        return Instances.ScreenGui, Instances.Main
+        return Instances.ScreenGui, Instance.ClickGui
     end
 
     function Library.new()
