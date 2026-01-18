@@ -1,3 +1,11 @@
+local BASE = "https://raw.githubusercontent.com/ApoHikingSociety/DynamicUI/main/Modules/"
+
+local function Load(path)
+	return loadstring(game:HttpGet(BASE .. path))()
+end
+
+local CategoryFactory = Load("Category.lua")
+
 local UI = {}
 UI.__index = UI
 
@@ -12,9 +20,9 @@ function UI:AddCategory(name)
 		return self.Categories[name]
 	end
 
-	local Category = require(script:LoadModule("Category.lua"))(name, self)
+	local Category = CategoryFactory.new(name, self)
 	self.Categories[name] = Category
 	return Category
 end
 
-return UI.new()
+return UI.new(
