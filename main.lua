@@ -1,3 +1,5 @@
 return function(Modules)
-    return Modules.Library
+    local Library = Modules.Library
+    local UI = Library.new()
+    return UI
 end
