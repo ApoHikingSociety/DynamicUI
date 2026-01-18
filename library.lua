@@ -76,9 +76,11 @@ return function(Modules)
     end
 
     function Library:AddCategory(Name)
+        local Self = self
+
         assert(type(Name) == "string", "Category name must be a string")
 
-        if Self and Self.Categories and Self.Categories[Name] then
+        if Self.Categories[Name] then
             error("Category already exists: " .. Name)
         end
 
