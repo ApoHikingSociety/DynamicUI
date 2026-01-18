@@ -18,7 +18,7 @@ return function(Modules)
     local Functions = {}
 
     function Functions.CreateUi()
-        local Existing = CoreGui:FindFirstChild("DynamicUI")
+        local Existing = Services.CoreGui:FindFirstChild("DynamicUI")
         if Existing then
             return Existing, Existing:FindFirstChild("ClickGui")
         end
