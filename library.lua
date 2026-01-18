@@ -4,23 +4,25 @@ return function(Modules)
 
     local Category = Modules.Category
 
-    function Library.new(parent)
+    function Library.new()
         local self = setmetatable({}, Library)
-        self.Parent = parent or game.CoreGui
+
         self.Categories = {}
-        return self
-    end
 
-    function Library:AddCategory(name)
-        assert(type(name) == "string", "Category name must be string")
+        function self:AddCategory(name)
+            assert(type(name) == "string", "Category name must be a string")
 
-        if self.Categories[name] then
-            return self.Categories[name]
+            if self.Categories[name] then
+                error("Category already exists: " .. name)
+            end
+
+            local category = Category.new(name)
+            self.Categories[name] = category
+
+            return category
         end
 
-        local category = Category.new(name, self.Parent)
-        self.Categories[name] = category
-        return category
+        return self
     end
 
     Modules.Library = Library
