@@ -1,29 +1,15 @@
-return function(Modules)
-    local Library = {}
-    Library.__index = Library
+local Cache = "?cache=" .. os.time()
+local BaseUrl = "https://raw.githubusercontent.com/ApoHikingSociety/DynamicUI/main/"
 
-    local Category = Modules.Category
-
-    function Library.new()
-        local self = setmetatable({}, Library)
-
-        self.Categories = {}
-
-        function self:AddCategory(name)
-            assert(type(name) == "string", "Category name must be a string")
-
-            if self.Categories[name] then
-                error("Category already exists: " .. name)
-            end
-
-            local category = Category.new(name)
-            self.Categories[name] = category
-
-            return category
-        end
-
-        return self
-    end
-
-    Modules.Library = Library
+local function LoadFile(name)
+    local source = game:HttpGet(BaseUrl .. name .. Cache)
+    return loadstring(source)()
 end
+
+local Modules = {}
+
+LoadFile("category.lua")(Modules)
+LoadFile("library.lua")(Modules)
+
+local Main = LoadFile("main.lua")(Modules)
+return Main
