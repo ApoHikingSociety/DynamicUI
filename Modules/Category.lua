@@ -1,3 +1,11 @@
+local BASE = "https://raw.githubusercontent.com/ApoHikingSociety/DynamicUI/main/Modules/"
+
+local function Load(path)
+	return loadstring(game:HttpGet(BASE .. path))()
+end
+
+local ModuleFactory = Load("Module.lua")
+
 local Category = {}
 Category.__index = Category
 
@@ -14,23 +22,9 @@ function Category:AddModule(name)
 		return self.Modules[name]
 	end
 
-	local Module = {}
-	Module.__index = Module
-	Module.Name = name
-	Module.Toggles = {}
-
-	function Module:AddToggle(text, default, callback)
-		local togg = {
-			Text = text,
-			Value = default,
-			Callback = callback
-		}
-		table.insert(self.Toggles, togg)
-		return togg
-	end
-
-	self.Modules[name] = setmetatable(Module, Module)
-	return self.Modules[name]
+	local Module = ModuleFactory.new(name, self)
+	self.Modules[name] = Module
+	return Module
 end
 
 return Category
